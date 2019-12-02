@@ -4,9 +4,9 @@ module WashOutHelper
     case controller.soap_config.wsdl_style
     when 'rpc'
       if param.map.present? || !param.value.nil?
-        { :"xsi:type" => param.namespaced_type }
+        {:"xsi:type" => param.namespaced_type}
       else
-        { :"xsi:nil" => true }
+        {:"xsi:nil" => true}
       end
     when 'document'
       {}
@@ -44,9 +44,9 @@ module WashOutHelper
             xml.tag! tag_name, param_options.merge(attrs), &blk
           end
         else
-          xml.tag! tag_name, param_options do
-            wsdl_data(xml, param.map)
-          end
+          #  xml.tag! tag_name, param_options do
+          wsdl_data(xml, param.map)
+          #  end
         end
       else
         if param.multiplied
@@ -61,35 +61,36 @@ module WashOutHelper
     end
   end
 
-  def wsdl_type(xml, param, defined=[])
+  def wsdl_type(xml, param, defined = [])
     more = []
 
     if param.struct?
       if !defined.include?(param.basic_type)
-        xml.tag! "xsd:complexType", :name => param.basic_type do
-          attrs, elems = [], []
-          param.map.each do |value|
-            more << value if value.struct?
-            if value.attribute?
-              attrs << value
-            else
-              elems << value
-            end
-          end
-
-          if elems.any?
-            xml.tag! "xsd:sequence" do
-              elems.each do |value|
-                xml.tag! "xsd:element", wsdl_occurence(value, false, :name => value.name, :type => value.namespaced_type)
+        xml.tag! "xsd:element", :name => param.basic_type do
+          xml.tag! "xsd:complexType" do
+            attrs, elems = [], []
+            param.map.each do |value|
+              more << value if value.struct?
+              if value.attribute?
+                attrs << value
+              else
+                elems << value
               end
             end
-          end
 
-          attrs.each do |value|
-            xml.tag! "xsd:attribute", wsdl_occurence(value, false, :name => value.attr_name, :type => value.namespaced_type)
+            if elems.any?
+              xml.tag! "xsd:sequence" do
+                elems.each do |value|
+                  xml.tag! "xsd:element", wsdl_occurence(value, false, :name => value.name, :type => value.namespaced_type)
+                end
+              end
+            end
+
+            attrs.each do |value|
+              xml.tag! "xsd:attribute", wsdl_occurence(value, false, :name => value.attr_name, :type => value.namespaced_type)
+            end
           end
         end
-
         defined << param.basic_type
       elsif !param.classified?
         raise RuntimeError, "Duplicate use of `#{param.basic_type}` type name. Consider using classified types."
@@ -102,10 +103,10 @@ module WashOutHelper
   end
 
   def wsdl_occurence(param, inject, extend_with = {})
-    data = {"#{'xsi:' if inject}nillable" => 'true'}
+    data = {}
     if param.multiplied
-      data["#{'xsi:' if inject}minOccurs"] = 0
-      data["#{'xsi:' if inject}maxOccurs"] = 'unbounded'
+      data["#{'xsi:' if inject}minOccurs"] = 1
+      data["#{'xsi:' if inject}maxOccurs"] = 1
     end
     extend_with.merge(data)
   end

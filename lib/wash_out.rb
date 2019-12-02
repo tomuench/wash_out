@@ -33,6 +33,13 @@ module ActionDispatch::Routing
       match "#{controller_name}/action" => WashOut::Router.new(controller_class_name), :via => [:get, :post],
         :defaults => { :controller => controller_class_name, :action => 'soap' }, :format => false,
         :as => "#{controller_class_name}_soap"
+
+      match "#{controller_name}"   => "#{controller_name}#_generate_wsdl", :via => :get, :format => false,
+            :as => "#{controller_class_name}_wsdl2"
+      match "#{controller_name}/action" => WashOut::Router.new(controller_class_name), :via => [:get, :post],
+            :defaults => { :controller => controller_class_name, :action => 'soap' }, :format => false,
+            :as => "#{controller_class_name}_soap_action"
+
     end
   end
 end

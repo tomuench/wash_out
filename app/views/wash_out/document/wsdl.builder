@@ -22,12 +22,17 @@ xml.definitions 'xmlns' => 'http://schemas.xmlsoap.org/wsdl/',
   @map.each do |operation, formats|
     xml.message :name => "#{operation}" do
       formats[:in].each do |p|
-        xml.part wsdl_occurence(p, false, :name => p.name, :type => p.namespaced_type)
+        xml.part wsdl_occurence(p, false, :name => p.name, :element => p.namespaced_type)
       end
     end
     xml.message :name => formats[:response_tag] do
       formats[:out].each do |p|
-        xml.part wsdl_occurence(p, false, :name => p.name, :type => p.namespaced_type)
+        if p.namespaced_type == "xsd:string"
+          xml.part wsdl_occurence(p, false, :name => p.name, :type=> p.namespaced_type)
+        else
+          xml.part wsdl_occurence(p, false, :name => p.name, :element => p.namespaced_type)
+        end
+
       end
     end
   end
@@ -48,13 +53,13 @@ xml.definitions 'xmlns' => 'http://schemas.xmlsoap.org/wsdl/',
         xml.tag! "soap:operation", :soapAction => operation
         xml.input do
           xml.tag! "soap:body",
-            :use => "literal",
-            :namespace => @namespace
+                   :use => "literal",
+                   :namespace => @namespace
         end
         xml.output do
           xml.tag! "soap:body",
-            :use => "literal",
-            :namespace => @namespace
+                   :use => "literal",
+                   :namespace => @namespace
         end
       end
     end

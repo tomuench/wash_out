@@ -8,6 +8,9 @@ WashOut is a gem that greatly simplifies creation of SOAP service providers.
 
 But if you have a chance, please [http://stopsoap.com/](http://stopsoap.com/).
 
+## Informations about this fork
+Changed to work with Docuware C#-Webservices. It only changes the document style.
+
 ## Compatibility
 
 Rails 4.0 and higher is tested. Code is known to work with earlier versions but we don't bother testing outdated versions anymore - give it a try if you are THAT unlucky.
