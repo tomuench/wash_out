@@ -62,9 +62,13 @@ module WashOut
     def _load_params(spec, xml_data)
       params = HashWithIndifferentAccess.new
       spec.each do |param|
-        key = param.raw_name.to_sym
+        key = soap_action.to_sym
+        key2 = param.raw_name.to_sym
+
         if xml_data.has_key? key
           params[param.raw_name] = param.load(xml_data, key)
+        elsif xml_data.has_key? key2
+          params[param.raw_name] = param.load(xml_data, key2)
         end
       end
       params

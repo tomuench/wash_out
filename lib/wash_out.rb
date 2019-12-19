@@ -39,7 +39,9 @@ module ActionDispatch::Routing
       match "#{controller_name}/action" => WashOut::Router.new(controller_class_name), :via => [:get, :post],
             :defaults => { :controller => controller_class_name, :action => 'soap' }, :format => false,
             :as => "#{controller_class_name}_soap_action"
-
+      match "#{controller_name}" => WashOut::Router.new(controller_class_name), :via => [:post],
+            :defaults => { :controller => controller_class_name, :action => 'soap' }, :format => false,
+            :as => "#{controller_class_name}_soap_action_direkt"
     end
   end
 end
